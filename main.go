@@ -9,17 +9,19 @@ import (
 	"myscheduler/pkg/plugins"
 
 	"k8s.io/component-base/logs"
-	scheduler "k8s.io/kubernetes/cmd/kube-scheduler/app"
+	"k8s.io/kubernetes/cmd/kube-scheduler/app"
 )
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
+	fmt.Println("scheduler name:", plugins.Name)
+
 	// 注册自定义 scheduler 插件
-	command := scheduler.NewSchedulerCommand(
+	command := app.NewSchedulerCommand(
 		// plugins.Name 和 plugins.New 可以在
 		// myscheduler/pkg/plugin/ 文件夹中的 plugins package 中获得
-		scheduler.WithPlugin(plugins.Name, plugins.New),
+		app.WithPlugin(plugins.Name, plugins.New),
 	)
 
 	if err := command.Execute(); err != nil {

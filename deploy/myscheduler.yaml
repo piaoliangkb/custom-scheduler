@@ -21,6 +21,7 @@ data:
         - name: "myscheduler"
     pluginConfig:
     - name: "myscheduler"
+      args: {"master": "master", "kubeconfig": "kubeconfig"}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -47,9 +48,9 @@ spec:
             name: scheduler-config
       containers:
         - name: myscheduler-ctrl
-          image: myscheduler:latest
+          image: piaoliangkb/myscheduler:v0.0.1
           # use local image
-          imagePullPolicy: Never
+          imagePullPolicy: Always
           args:
             - myscheduler
             - --config=/etc/kubernetes/scheduler-config.yaml

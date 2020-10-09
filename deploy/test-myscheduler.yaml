@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-scheduler
+  name: test-myscheduler
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: test-scheduler
+      app: test-myscheduler
   template:
     metadata:
       labels:
-        app: test-scheduler
+        app: test-myscheduler
     spec:
-      schedulerName: sample-scheduler
+      schedulerName: myscheduler
       containers:
       - image: nginx
         imagePullPolicy: IfNotPresent

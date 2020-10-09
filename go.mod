@@ -3,9 +3,9 @@ module myscheduler
 go 1.15
 
 require (
+	golang.org/x/net v0.0.0-20200822124328-c89045814202 // indirect
 	k8s.io/api v0.17.3
 	k8s.io/apimachinery v0.17.3
-	k8s.io/cli-runtime v0.17.3
 	k8s.io/component-base v0.17.3
 	k8s.io/klog v1.0.0
 	k8s.io/kubernetes v1.17.3

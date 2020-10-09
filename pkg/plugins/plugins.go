@@ -30,7 +30,11 @@ func (s *SamplePlugin) PreFilter(ctx context.Context, state *framework.CycleStat
 	return framework.NewStatus(framework.Success, "")
 }
 
-//
+func (s *SamplePlugin) PreFilterExtensions() framework.PreFilterExtensions {
+	klog.V(3).Infof("This is custom scheduler stage of: PreFilter using PreFilterExtensions")
+	return nil
+}
+
 func (s *SamplePlugin) Filter(ctx context.Context, state *framework.CycleState, pod *v1.Pod, node *nodeinfo.NodeInfo) *framework.Status {
 	klog.V(3).Infof("This is custom scheduler stage of: Filter")
 	klog.V(3).Infof("filter pod: %v, node: %v", pod.Name, node.Node().Name)
