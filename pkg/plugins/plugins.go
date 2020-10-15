@@ -37,6 +37,9 @@ func (s *SamplePlugin) PreFilterExtensions() framework.PreFilterExtensions {
 
 func (s *SamplePlugin) Filter(ctx context.Context, state *framework.CycleState, pod *v1.Pod, node *nodeinfo.NodeInfo) *framework.Status {
 	klog.V(3).Infof("This is custom scheduler stage of: Filter")
+	if pod.Name != "nginx" {
+		return framework.NewStatus(framework.Unschedulable, "only pod name 'nginx' is allowed")
+	}
 	klog.V(3).Infof("filter pod: %v, node: %v", pod.Name, node.Node().Name)
 	return framework.NewStatus(framework.Success, "")
 }

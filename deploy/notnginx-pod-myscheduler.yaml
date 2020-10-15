@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+    name: notnginx
+    labels:
+        app: nginx
+spec:
+    schedulerName: myscheduler
+    containers:
+    - name: nginx
+      image: nginx
+      imagePullPolicy: IfNotPresent
+      ports:
+      - containerPort: 80
