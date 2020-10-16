@@ -7,7 +7,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/klog"
 	framework "k8s.io/kubernetes/pkg/scheduler/framework/v1alpha1"
-	"k8s.io/kubernetes/pkg/scheduler/nodeinfo"
 )
 
 type SamplePlugin struct{}
@@ -35,7 +34,7 @@ func (s *SamplePlugin) PreFilterExtensions() framework.PreFilterExtensions {
 	return nil
 }
 
-func (s *SamplePlugin) Filter(ctx context.Context, state *framework.CycleState, pod *v1.Pod, node *nodeinfo.NodeInfo) *framework.Status {
+func (s *SamplePlugin) Filter(ctx context.Context, state *framework.CycleState, pod *v1.Pod, node *framework.NodeInfo) *framework.Status {
 	klog.V(3).Infof("This is custom scheduler stage of: Filter")
 	if pod.Name != "nginx" {
 		return framework.NewStatus(framework.Unschedulable, "only pod name 'nginx' is allowed")
@@ -46,6 +45,6 @@ func (s *SamplePlugin) Filter(ctx context.Context, state *framework.CycleState, 
 
 // release-1.19 pkg/scheduler/framework/runtime/registry.go
 //type PluginFactory = func(configuration *runtime.Unknown, f FrameworkHandle) (Plugin, error)
-func New(_ *runtime.Unknown, _ framework.FrameworkHandle) (framework.Plugin, error) {
+func New(_ runtime.Object, _ framework.FrameworkHandle) (framework.Plugin, error) {
 	return &SamplePlugin{}, nil
 }
