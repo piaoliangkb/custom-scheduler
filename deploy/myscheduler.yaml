@@ -21,7 +21,6 @@ data:
         - name: "myscheduler"
     pluginConfig:
     - name: "myscheduler"
-      args: {"master": "master", "kubeconfig": "kubeconfig"}
 ---
 apiVersion: apps/v1
 kind: Deployment

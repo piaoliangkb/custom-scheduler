@@ -44,20 +44,6 @@ func (s *SamplePlugin) Filter(ctx context.Context, state *framework.CycleState, 
 	return framework.NewStatus(framework.Success, "")
 }
 
-// func (s *Sample) Filter(ctx context.Context, state *framework.CycleState, pod *v1.Pod, node *nodeinfo.NodeInfo) *framework.Status {
-// 	klog.V(3).Infof("filter pod: %v", pod.Name)
-// 	return framework.NewStatus(framework.Success, "")
-// }
-//
-// func (s *Sample) PreBind(ctx context.Context, state *framework.CycleState, pod *v1.Pod, nodeName string) *framework.Status {
-// 	nodeInfo, err := s.handle.SnapshotSharedLister().NodeInfos().Get(nodeName)
-// 	if err != nil {
-// 		return framework.NewStatus(framework.Error, err.Error())
-// 	}
-// 	klog.V(3).Infof("prebind node info: %+v", nodeInfo.Node())
-// 	return framework.NewStatus(framework.Success, "")
-// }
-
 // release-1.19 pkg/scheduler/framework/runtime/registry.go
 //type PluginFactory = func(configuration *runtime.Unknown, f FrameworkHandle) (Plugin, error)
 func New(_ *runtime.Unknown, _ framework.FrameworkHandle) (framework.Plugin, error) {
