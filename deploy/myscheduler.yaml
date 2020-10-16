@@ -47,7 +47,7 @@ spec:
             name: scheduler-config
       containers:
         - name: myscheduler-ctrl
-          image: piaoliangkb/myscheduler:v0.0.1
+          image: piaoliangkb/myscheduler:v1.19
           # use local image
           imagePullPolicy: Always
           args:

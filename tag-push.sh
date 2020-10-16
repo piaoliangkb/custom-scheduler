@@ -1,5 +1,5 @@
 #!/bin/bash
 
-docker tag myscheduler piaoliangkb/myscheduler:v0.0.1
-docker push piaoliangkb/myscheduler:v0.0.1
+docker tag myscheduler piaoliangkb/myscheduler:v1.19
+docker push piaoliangkb/myscheduler:v1.19
 
