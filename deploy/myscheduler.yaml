@@ -1,65 +1,36 @@
 apiVersion: v1
-kind: ConfigMap
+kind: ServiceAccount
 metadata:
-  name: scheduler-config
+  name: myscheduler-sa
   namespace: kube-system
-data:
-  scheduler-config.yaml: |
-    apiVersion: kubescheduler.config.k8s.io/v1alpha1
-    kind: KubeSchedulerConfiguration
-    schedulerName: myscheduler
-    leaderElection:
-      leaderElect: true
-      lockObjectName: myscheduler
-      lockObjectNamespace: kube-system
-    plugins:
-      preFilter:
-        enabled:
-        - name: "myscheduler"
-      filter:
-        enabled:
-        - name: "myscheduler"
-    pluginConfig:
-    - name: "myscheduler"
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
-  name: myscheduler
+  name: myscheduler-as-kube-scheduler
   namespace: kube-system
-  labels:
-    component: myscheduler
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      component: myscheduler
-  template:
-    metadata:
-      labels:
-        component: myscheduler
-    spec:
-      serviceAccount: myscheduler-sa
-      priorityClassName: system-cluster-critical
-      volumes:
-        - name: scheduler-config
-          configMap:
-            name: scheduler-config
-      containers:
-        - name: myscheduler-ctrl
-          image: piaoliangkb/myscheduler:v1.19
-          # use local image
-          imagePullPolicy: Always
-          args:
-            - myscheduler
-            - --config=/etc/kubernetes/scheduler-config.yaml
-            - --v=3
-          resources:
-            requests:
-              cpu: "50m"
-          volumeMounts:
-            - name: scheduler-config
-              mountPath: /etc/kubernetes
+subjects:
+- kind: ServiceAccount
+  name: myscheduler-sa
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: myscheduler-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: myscheduler-as-volume-scheduler
+  namespace: kube-system
+subjects:
+- kind: ServiceAccount
+  name: myscheduler-sa
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: myscheduler-clusterrole
+  apiGroup: rbac.authorization.k8s.io
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -185,22 +156,65 @@ rules:
       - patch
       - update
 ---
-apiVersion: v1
-kind: ServiceAccount
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: myscheduler-sa
+  name: myscheduler
   namespace: kube-system
+  labels:
+    component: myscheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: myscheduler
+  template:
+    metadata:
+      labels:
+        component: myscheduler
+    spec:
+      serviceAccountName: myscheduler-sa
+      priorityClassName: system-cluster-critical
+      volumes:
+        - name: scheduler-config
+          configMap:
+            name: scheduler-config
+      containers:
+        - name: myscheduler-ctrl
+          image: piaoliangkb/myscheduler:v1.19
+          # use local image
+          imagePullPolicy: Always
+          args:
+            - myscheduler
+            - --config=/etc/kubernetes/scheduler-config.yaml
+            - --v=3
+            - --scheduler-name=myscheduler
+          resources:
+            requests:
+              cpu: "50m"
+          volumeMounts:
+            - name: scheduler-config
+              mountPath: /etc/kubernetes
 ---
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: myscheduler-clusterrolebinding
+  name: scheduler-config
   namespace: kube-system
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: myscheduler-clusterrole
-subjects:
-  - kind: ServiceAccount
-    name: myscheduler-sa
-    namespace: kube-system
+data:
+  scheduler-config.yaml: |
+    apiVersion: kubescheduler.config.k8s.io/v1beta1
+    kind: KubeSchedulerConfiguration
+    leaderElection:
+      leaderElect: false
+    #clientConnection:
+      #kubeconfig: "/etc/kubernetes/admin.conf"
+    profiles:
+    - schedulerName: myscheduler
+      plugins:
+        preFilter:
+          enabled:
+          - name: myscheduler
+        filter:
+          enabled:
+          - name: myscheduler 
