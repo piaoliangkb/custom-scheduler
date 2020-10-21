@@ -70,7 +70,7 @@ spec:
             name: scheduler-config
       containers:
         - name: myscheduler-ctrl
-          image: piaoliangkb/myscheduler:v1.19
+          image: piaoliangkb/myscheduler:v1.18
           # use local image
           imagePullPolicy: Always
           args:
@@ -92,18 +92,18 @@ metadata:
   namespace: kube-system
 data:
   scheduler-config.yaml: |
-    apiVersion: kubescheduler.config.k8s.io/v1beta1
+    apiVersion: kubescheduler.config.k8s.io/v1alpha1
     kind: KubeSchedulerConfiguration
+    schedulerName: myscheduler
     leaderElection:
       leaderElect: false
-    #clientConnection:
-      #kubeconfig: "/etc/kubernetes/admin.conf"
-    profiles:
-    - schedulerName: myscheduler
-      plugins:
-        preFilter:
-          enabled:
-          - name: myscheduler
-        filter:
-          enabled:
-          - name: myscheduler 
+    plugins:
+      preFilter:
+        enabled:
+        - name: myscheduler
+      filter:
+        enabled:
+        - name: myscheduler 
+    pluginConfig:
+    - name: "myscheduler"
+
