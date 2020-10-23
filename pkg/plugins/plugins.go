@@ -31,29 +31,40 @@ func (s *SamplePlugin) Name() string {
 	return Name
 }
 
+type stateData struct {
+	data string
+}
+
+func (s *stateData) Clone() framework.StateData {
+	copy := &stateData{
+		data: s.data,
+	}
+	return copy
+}
+
 // PreFilter print logs and return Success in this extension point
 func (s *SamplePlugin) PreFilter(ctx context.Context, state *framework.CycleState, pod *v1.Pod) *framework.Status {
 	klog.V(3).Infof("This is custom scheduler stage of: PreFilter")
-	klog.V(3).Infof("prefilter pod: %v, pod-namespace: %v, pod-spec-container: %v", pod.Name, pod.Namespace, pod.Spec.Containers)
+	klog.V(3).Infof("prefilter pod: %v", pod.Name)
 
-	jsonstr, errjson := json.Marshal(pod)
-	if errjson != nil {
-		resp, err := http.Post(
-			"http://192.168.229.1:8080/print",
-			"application/json",
-			strings.NewReader(string(jsonstr)),
-		)
-		if err != nil {
-			body, _ := ioutil.ReadAll(resp.Body)
-			klog.V(3).Infof("Get response from remote: %s", body)
-		} else {
-			klog.V(3).Infof("Error: %v", err)
-		}
-		return framework.NewStatus(framework.Success, "Pod json construct successful and post to remote server, schedule ok")
+	podjson, _ := json.Marshal(pod)
+	resp, err := http.Post(
+		"http://192.168.229.1:8080/print",
+		"application/json",
+		strings.NewReader(string(podjson)),
+	)
+	// If http post error, let this pod unscheduable
+	if err != nil {
+		klog.V(3).Infof("Error: %v", err)
+		return framework.NewStatus(framework.Unschedulable, "Cant send pod json to remote server, schedule terminated")
 	}
 
-	klog.V(3).Infof("Json construction error: %v", errjson)
-	return framework.NewStatus(framework.Unschedulable, "Pod json construct unsuccessful and not post to remote server, unscheduable")
+	// This body should return nodes info that will use in future extension points
+	body, _ := ioutil.ReadAll(resp.Body)
+	klog.V(3).Infof("Get response from remote: %s", body)
+	// Write response data to CycleState storage
+	state.Write(framework.StateKey(pod.Name), &stateData{data: string(body)})
+	return framework.NewStatus(framework.Success, "Pod info send to remote server, get essential nodes info")
 }
 
 // PreFilterExtensions reutrn nil
@@ -66,6 +77,14 @@ func (s *SamplePlugin) PreFilterExtensions() framework.PreFilterExtensions {
 // If not, set pod status: Uncheduable
 func (s *SamplePlugin) Filter(ctx context.Context, state *framework.CycleState, pod *v1.Pod, node *nodeinfo.NodeInfo) *framework.Status {
 	klog.V(3).Infof("This is custom scheduler stage of: Filter")
+
+	// Read data from CycleState storage
+	if v, e := state.Read(framework.StateKey(pod.Name)); e == nil {
+		if data, ok := v.(*stateData); ok {
+			klog.V(3).Infof("Get data from PreFilter extension point: %s", data)
+		}
+	}
+
 	if pod.Name != "nginx" {
 		return framework.NewStatus(framework.Unschedulable, "only pod name 'nginx' is allowed")
 	}
