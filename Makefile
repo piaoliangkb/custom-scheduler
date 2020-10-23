@@ -12,6 +12,9 @@ build-linux: init
 image: build-linux
 	docker build --no-cache . -t myscheduler
 
+upload-img: image
+	/bin/bash tag-push.sh
+
 clean:
 	rm -rf bin/
 
