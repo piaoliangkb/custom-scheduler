@@ -48,19 +48,19 @@ roleRef:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: myscheduler
+  name: custom-scheduler
   namespace: kube-system
   labels:
-    component: myscheduler
+    component: custom-scheduler
 spec:
   replicas: 1
   selector:
     matchLabels:
-      component: myscheduler
+      component: custom-scheduler
   template:
     metadata:
       labels:
-        component: myscheduler
+        component: custom-scheduler
     spec:
       serviceAccountName: myscheduler-sa
       priorityClassName: system-cluster-critical
@@ -69,7 +69,7 @@ spec:
           configMap:
             name: scheduler-config
       containers:
-        - name: myscheduler-ctrl
+        - name: custom-scheduler-ctrl
           image: piaoliangkb/myscheduler:v1.18
           # use local image
           imagePullPolicy: Always
@@ -97,14 +97,18 @@ data:
     leaderElection:
       leaderElect: false
     profiles:
+    - schedulerName: default-scheduler
     - schedulerName: myscheduler
       plugins:
         preFilter:
           enabled:
-          - name: myscheduler
+          - name: simplelog
+          - name: httpreq
         filter:
           enabled:
-          - name: myscheduler 
+          - name: simplelog
+          - name: httpreq
       pluginConfig:
-      - name: "myscheduler"
+      - name: "simplelog"
+      - name: "httpreq"
 
