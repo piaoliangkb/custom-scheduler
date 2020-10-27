@@ -85,8 +85,11 @@ func (s *SamplePlugin) Filter(ctx context.Context, state *framework.CycleState, 
 		}
 	}
 
+    // Check whether pod name is nginx
+    // If not, return status with a message notify that
+    // this pod name is not nginx
 	if pod.Name != "nginx" {
-		return framework.NewStatus(framework.Unschedulable, "only pod name 'nginx' is allowed")
+		return framework.NewStatus(framework.Success, "pod name not 'nginx' is allowed")
 	}
 	klog.V(3).Infof("filter pod: %v, node: %v", pod.Name, node.Node().Name)
 	return framework.NewStatus(framework.Success, "")
