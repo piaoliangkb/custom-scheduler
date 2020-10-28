@@ -2,6 +2,6 @@ FROM debian:stretch-slim
 
 WORKDIR /
 
-COPY /bin/myscheduler /usr/local/bin
+COPY /bin/custom-scheduler /usr/local/bin
 
-CMD ["myscheduler"]
+CMD ["custom-scheduler"]
