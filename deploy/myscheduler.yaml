@@ -48,7 +48,9 @@ roleRef:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  # deployment name
   name: custom-scheduler
+  # deployment namespace
   namespace: kube-system
   labels:
     component: custom-scheduler
@@ -77,7 +79,7 @@ spec:
             - myscheduler
             - --config=/etc/kubernetes/scheduler-config.yaml
             - --v=3
-            - --scheduler-name=myscheduler
+            - --scheduler-name=custom-scheduler
           resources:
             requests:
               cpu: "50m"
@@ -98,7 +100,7 @@ data:
       leaderElect: false
     profiles:
     - schedulerName: default-scheduler
-    - schedulerName: myscheduler
+    - schedulerName: reqandlog
       plugins:
         preFilter:
           enabled:
