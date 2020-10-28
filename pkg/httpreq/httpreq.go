@@ -95,7 +95,7 @@ func (h *HTTPReq) Filter(ctx context.Context, state *framework.CycleState, pod *
 	return framework.NewStatus(framework.Success, "")
 }
 
-// New create a new HTTPReq instance
+// New creates a new HTTPReq instance
 func New(_ *runtime.Unknown, _ framework.FrameworkHandle) (framework.Plugin, error) {
 	return &HTTPReq{}, nil
 }

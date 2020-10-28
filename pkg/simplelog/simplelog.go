@@ -48,7 +48,7 @@ func (s *SimpleLog) Filter(ctx context.Context, state *framework.CycleState, pod
 	return framework.NewStatus(framework.Success, "")
 }
 
-// New create a new SimpleLog instance
+// New creates a new SimpleLog instance
 func New(_ *runtime.Unknown, _ framework.FrameworkHandle) (framework.Plugin, error) {
 	return &SimpleLog{}, nil
 }
