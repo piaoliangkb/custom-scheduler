@@ -76,7 +76,7 @@ spec:
           # use local image
           imagePullPolicy: Always
           args:
-            - myscheduler
+            - custom-scheduler
             - --config=/etc/kubernetes/scheduler-config.yaml
             - --v=3
             - --scheduler-name=custom-scheduler

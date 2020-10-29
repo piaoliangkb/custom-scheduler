@@ -16,7 +16,6 @@ import (
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	// 注册自定义 scheduler plugin
 	command := app.NewSchedulerCommand(
 		app.WithPlugin(httpreq.Name, httpreq.New),
 		app.WithPlugin(simplelog.Name, simplelog.New),
