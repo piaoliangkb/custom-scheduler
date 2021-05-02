@@ -1,6 +1,13 @@
 # custom-scheduler
 
-Custom scheduler based on [Kubernetes Scheduling Framework](https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/)
+Custom scheduler based on [Kubernetes Scheduling Framework](https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/) with two plugins:
+
+- [httpreq](https://github.com/piaoliangkb/custom-scheduler/tree/v1.18/pkg/httpreq)
+- [simplelog](https://github.com/piaoliangkb/custom-scheduler/tree/v1.18/pkg/simplelog)
+
+Run this scheduler in a Kubernetes cluster V1.18. 
+
+See API changes in branch v1.19 for Kubernetes V1.19.
 
 ## Build docker image
 
