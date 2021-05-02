@@ -4,7 +4,7 @@ Custom scheduler based on [Kubernetes Scheduling Framework](https://kubernetes.i
 
 ## Build docker image
 
-```shell
+```
 // Compile and build docker image
 $ make image
 
@@ -20,13 +20,13 @@ $ docker image load -i myscheduler_v1.18.tar.gz
 
 ## Deploy scheduler
 
-```shell
+```
 $ kubectl apply -f deploy/myscheduler.yaml
 ```
 
 ## Using scheduler
 
-```shell
+```
 // Specify Pod.Spec.schedulerName in yaml file defined in myscheduler.yaml
 $ kubectl apply -f deploy/nginx-pod-myscheduler.yaml
 $ kubectl apply -f deploy/nginx-pod-default-scheduler.yaml
@@ -34,12 +34,12 @@ $ kubectl apply -f deploy/nginx-pod-default-scheduler.yaml
 
 ## Scheduler log
 
-```shell
+```
 $ ./log_myscheduler.sh
 ```
 
 ## Delete scheduler
 
-```shell
+```
 $ kubectl delete -f deploy/myscheduler.yaml
 ```
